@@ -1,9 +1,8 @@
 package controller
 
 import (
-	"net/http"
-
 	"golang/internal/service"
+	"golang/pkg/response"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,9 +20,5 @@ func NewCompanyController() *CompanyController {
 func (cc *CompanyController) GetCompanyByID(c *gin.Context) {
 	result := cc.companyService.GetCompanyByID()
 
-	c.JSON(http.StatusOK, gin.H{
-		"code":    http.StatusOK,
-		"message": "Success",
-		"data":    result,
-	})
+	response.SuccessResponse(c, response.Success, result)
 }

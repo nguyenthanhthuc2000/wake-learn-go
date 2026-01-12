@@ -2,7 +2,8 @@ package controller
 
 import (
 	"golang/internal/service"
-	"net/http"
+	"golang/pkg/response"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,11 +19,17 @@ func NewUserController() *UserController {
 }
 
 func (uc *UserController) GetUserByID(c *gin.Context) {
-	result := uc.userService.GetUser()
+	userID := c.Param("id")
+	userIDUint, err := strconv.ParseUint(userID, 10, 32)
+	if err != nil {
+		response.ErrorResponse(c, response.ErrCodeInvalidRequest)
+		return
+	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"code":    http.StatusOK,
-		"message": "Success",
-		"data":    result,
-	})
+	result, err := uc.userService.GetUserByID(uint(userIDUint))
+	if err != nil {
+		response.ErrorResponse(c, response.ErrCodeNotFound)
+		return
+	}
+	response.SuccessResponse(c, response.Success, result)
 }

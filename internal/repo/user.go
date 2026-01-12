@@ -1,5 +1,11 @@
 package repo
 
+import (
+	"errors"
+	"fmt"
+	"strconv"
+)
+
 type UserRepository struct {
 }
 
@@ -12,9 +18,14 @@ func NewUserRepository() *UserRepository {
 	return &UserRepository{}
 }
 
-func (ur *UserRepository) GetUser() User {
-	return User{
-		ID:   "1",
-		Name: "John Doe",
+func (ur *UserRepository) GetUserByID(userID uint) (*User, *error) {
+	validUserID := userID >= 10
+	if !validUserID {
+		err := errors.New("Invalid user ID")
+		return nil, &err
 	}
+	return &User{
+		ID:   strconv.FormatUint(uint64(userID), 10),
+		Name: fmt.Sprintf("User %d", userID),
+	}, nil
 }
